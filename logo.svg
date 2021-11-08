@@ -1,0 +1,13 @@
+<svg width="365" height="158" xmlns="http://www.w3.org/2000/svg">
+    <!-- Created with Method Draw - http://github.com/duopixel/Method-Draw/ -->
+    <defs>
+        <linearGradient y2="0" x2="0" y1="1" x1="0" id="svg_4">
+            <stop offset="0" stop-color="#0099ee"/>
+            <stop offset="1" stop-color="#00ccbb"/>
+        </linearGradient>
+    </defs>
+    <g>
+        <title>Layer 1</title>
+        <text style="cursor: move;" xml:space="preserve" text-anchor="start" font-family="'League Gothic', sans-serif" font-size="120" id="svg_1" y="125.203125" x="0.007813" stroke-width="0" stroke="#000" fill="url(#svg_4)">Pruina</text>
+    </g>
+</svg>
