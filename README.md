@@ -1,4 +1,4 @@
-[![Pruina-Socket-Python](https://socialify.git.ci/Aminor-z/Pruina-Socket-Python/image?font=Inter&forks=1&issues=1&language=1&logo=https%3A%2F%2Fraw.githubusercontent.com%2FAminor-z%2FPruina-Socket-Python%2Fmain%2Flogo.svg&pattern=Plus&pulls=1&stargazers=1&theme=Dark)](https://github.com/Aminor-z/Pruina-Socket-Python)
+[![Pruina-Socket-Python](https://socialify.git.ci/Aminor-z/Pruina-Socket-Python/image?forks=1&issues=1&language=1&logo=https%3A%2F%2Fraw.githubusercontent.com%2FAminor-z%2FPruina-Socket-Python%2Fmain%2Flogo.svg&name=1&pulls=1&stargazers=1&theme=Dark)](https://github.com/Aminor-z/Pruina-Socket-Python)
 
 # Pruina-Socket
 **Pruina-Socket**是一个用于快速开发的TCP Socket组件，包含服务端、客户端等内容。
