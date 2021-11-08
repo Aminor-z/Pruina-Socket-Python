@@ -1,9 +1,13 @@
 [![Pruina-Socket-Python](https://socialify.git.ci/Aminor-z/Pruina-Socket-Python/image?font=Inter&forks=1&issues=1&language=1&logo=https%3A%2F%2Fraw.githubusercontent.com%2FAminor-z%2FPruina-Socket-Python%2Fmain%2Flogo.svg&pattern=Plus&pulls=1&stargazers=1&theme=Dark)](https://github.com/Aminor-z/Pruina-SocketServer-Python)
 
-# Prunia-Socket
-**Prunia-Socket**是一个用于快速开发的TCP Socket组件，包含服务端、客户端等内容。
-# Prunia-Socket-Python
-通过以下简单的代码，即可启动具有响应功能的`Prunia-Socket`的服务端和客户端：
+# Pruina-Socket
+**Pruina-Socket**是一个用于快速开发的TCP Socket组件，包含服务端、客户端等内容。
+# Pruina-Socket-Python
+安装：
+```cmd
+pip install pruina-socket
+```
+通过以下简单的代码，即可启动具有响应功能的`Pruina-Socket`的服务端和客户端：
 
 ```python
 from pruina.socket.server import PruinaSocketServer
@@ -202,7 +206,7 @@ server.serve_forever()
 
 * **Properties**  
 `Properties`用于传入小型对象，如int，str等。  
-Prunia的server中，有`properties`和`local_properties`之分。
+Pruina的server中，有`properties`和`local_properties`之分。
 > * **properties**  
 > 在整个server和所有handler中，只存在唯一的`properties`
 >
@@ -229,7 +233,7 @@ server.serve_forever()
 * Resources  
 `Resources`用于传入大型资源，如`torch.nn.model`等。  
 `Resources`中保存着`Resource`和`LazyResource`（见Resource & LazyResource）  
-Prunia的server中，有`resources`和`local_resources`之分。
+Pruina的server中，有`resources`和`local_resources`之分。
 > * **resources**  
 > 在整个server和所有handler中，只存在唯一的`resources`。  
 >
@@ -292,12 +296,12 @@ server.serve_forever()
 ```
 
 ## Cython
-`Prunia-SocketServer`可通过`cypackage`直接转化为cython版本。
+`Pruina-SocketServer`可通过`cypackage`直接转化为cython版本。
 * 安装`cypackage`：
 ```cmd
 pip install cypackage
 ```
-* 使用`cypackage`生成cython版本的`Prunia-SocketServer`
+* 使用`cypackage`生成cython版本的`Pruina-SocketServer`
 ```cmd
-cypackage prunia-socket
+cypackage Pruina-socket
 ```
