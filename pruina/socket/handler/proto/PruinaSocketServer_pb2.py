@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x18PruinaSocketServer.proto\"1\n\x07Wrapper\x12\n\n\x02id\x18\x01 \x01(\x03\x12\x0c\n\x04type\x18\x02 \x01(\x05\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\x0c\x62\x06proto3'
+  serialized_pb=b'\n\x18PruinaSocketServer.proto\"J\n\x07Wrapper\x12\n\n\x02id\x18\x01 \x01(\x03\x12\x0c\n\x04type\x18\x02 \x01(\x05\x12\x0c\n\x04\x64\x61ta\x18\x03 \x01(\x0c\x12\x17\n\x0fstream_property\x18\x04 \x01(\x05\x62\x06proto3'
 )
 
 
@@ -54,6 +54,13 @@ _WRAPPER = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
+    _descriptor.FieldDescriptor(
+      name='stream_property', full_name='Wrapper.stream_property', index=3,
+      number=4, type=5, cpp_type=1, label=1,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
   ],
   extensions=[
   ],
@@ -67,7 +74,7 @@ _WRAPPER = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=28,
-  serialized_end=77,
+  serialized_end=102,
 )
 
 DESCRIPTOR.message_types_by_name['Wrapper'] = _WRAPPER
