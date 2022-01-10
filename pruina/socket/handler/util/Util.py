@@ -27,7 +27,7 @@ def send(conn, _type, data: bytes, _id=-1, is_stream=False, stream_end=False):
     wrapper.id = _id
     wrapper.type = __type
     wrapper.data = data
-    wrapper.stream_property = (is_stream << 1)+ stream_end
+    wrapper.stream_property = (is_stream << 1) + stream_end
     byte_data = wrapper.SerializeToString()
     try:
         conn.send(b"<W" + len(byte_data).to_bytes(4, byteorder='big', signed=False) + byte_data)

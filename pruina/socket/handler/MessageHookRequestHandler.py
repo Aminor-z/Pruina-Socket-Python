@@ -4,7 +4,7 @@ from socketserver import BaseRequestHandler, BaseServer
 from typing import Any
 
 from pruina.socket.handler.util.General import CachedHooks, Resource, Properties, Resources
-from copy import deepcopy
+from copy import copy
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s %(levelname)s: %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
@@ -26,9 +26,9 @@ class MessageHookRequestHandler(BaseRequestHandler):
         super().setup()
         self.server_name: str = getattr(self.server, "name")
         self.resources: Resources = getattr(self.server, "resources")
-        self.local_resources: Resources = deepcopy(getattr(self.server, "local_resources"))
+        self.local_resources: Resources = copy(getattr(self.server, "local_resources"))
         self.properties: Properties = getattr(self.server, "properties")
-        self.local_properties: Properties = deepcopy(getattr(self.server, "local_properties"))
+        self.local_properties: Properties = copy(getattr(self.server, "local_properties"))
         self.server_hooks: CachedHooks = getattr(self.server, "hooks")
         self.hooks: CachedHooks = CachedHooks(parent=self.server_hooks)
 

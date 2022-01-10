@@ -32,8 +32,7 @@ def general_handle(conn, hooks, handler):
                 wrapper = Pb.Wrapper()
                 wrapper.ParseFromString(_data)
                 data = data[size:]
-                hooks.call_hook(wrapper.type, wrapper.data, wrapper=wrapper,
-                                is_finish=wrapper.block_index >= wrapper.block_size, handler=handler)
+                hooks.call_hook(wrapper.type, wrapper.data, wrapper=wrapper, handler=handler)
         except ConnectionResetError:
             return False
         except:

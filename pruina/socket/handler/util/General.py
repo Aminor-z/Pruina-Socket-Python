@@ -22,9 +22,9 @@ class CachedHooks(Hooks):
         self.last_hook_value = None
         if parent:
             self.parent = parent
-            from copy import deepcopy
-            self.hooks = deepcopy(self.parent.hooks)
-            self.hooks_reflect_dict = deepcopy(self.parent.hooks_reflect_dict)
+            from copy import copy
+            self.hooks = copy(self.parent.hooks)
+            self.hooks_reflect_dict = copy(self.parent.hooks_reflect_dict)
         else:
             self.hooks = dict()
             self.hooks_reflect_dict = dict()
@@ -125,7 +125,7 @@ class Resources(object):
 
     def load_resources(self):
         unload_resource: Resource
-        if len(self.__unload_resources)>0:
+        if len(self.__unload_resources) > 0:
             q = tqdm(self.__unload_resources)
             for unload_resource in q:
                 q.set_description(f"Loading Resource[{unload_resource.name}]")
@@ -165,7 +165,7 @@ class Resource(object):
     def get(self, release=True):
         if self.load_func:
             if release:
-                del self.load_func
+                self.load_func = None
         return self.resource
 
 
