@@ -1,8 +1,11 @@
 # cython: language_level=3
 import logging
 import traceback
+from concurrent.futures import ThreadPoolExecutor
 
 from tqdm import tqdm
+
+from pruina.socket.handler.util.util import hashcode
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s %(levelname)s: %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
@@ -16,31 +19,31 @@ class Hooks(object):
 
 
 class CachedHooks(Hooks):
-    def __init__(self, parent: Hooks = None):
+    def __init__(self, thread_pool_size=2, parent: Hooks = None):
         super().__init__()
-        self.last_hook_key = None
+        self.last_hook_key: str = ""
         self.last_hook_value = None
+        self.hooks: dict = dict()
+        self.hooks_reflect_dict = dict()
+        self.thread_pool_size = thread_pool_size
+        self.thread_pool = ThreadPoolExecutor(max_workers=thread_pool_size)
         if parent:
             self.parent = parent
             from copy import copy
             self.hooks = copy(self.parent.hooks)
             self.hooks_reflect_dict = copy(self.parent.hooks_reflect_dict)
-        else:
-            self.hooks = dict()
-            self.hooks_reflect_dict = dict()
 
     def clear_cache(self):
         self.last_hook_key = None
         self.last_hook_value = None
 
-    def add_hook(self, flag, func):
+    def add_hook(self, flag, func, new_thread=False):
         if type(flag) == str:
-            from pruina.socket.handler.util.Util import hashcode
             hc = hashcode(flag)
-            self.hooks[hc] = func
+            self.hooks[hc] = (func, new_thread)
             self.hooks_reflect_dict[hc] = flag
         elif type(flag) == int:
-            self.hooks[flag] = func
+            self.hooks[flag] = (func, new_thread)
 
     def get_hook(self, flag):
         if self.last_hook_key == flag:
@@ -57,16 +60,16 @@ class CachedHooks(Hooks):
     def call_hook(self, flag, data, **kwargs):
         c = self.get_hook(flag)
         if c is not None:
-            try:
-                return c(data, **kwargs)
-            except:
-                print(traceback.print_exc())
+            if c[1]:
+                self.thread_pool.submit(c[0], data, **kwargs)
+            else:
+                return c[0](data, **kwargs)
         else:
             name = self.hooks_reflect_dict.get(flag)
             if name is None:
-                logging.error("No such hook[type={}]".format(flag))
+                logging.error(f"No such hook[type={flag}]")
             else:
-                logging.error("No such hook[type={}]".format(name))
+                logging.error(f"No such hook[type={name}]")
 
 
 class LoadFunc(object):
@@ -82,13 +85,13 @@ class LoadFunc(object):
         self.kwargs: {} = kwargs
 
     def load(self):
-        if self.args:
-            if self.kwargs:
+        if self.args and len(self.args):
+            if self.kwargs and len(self.kwargs):
                 obj = self.obj_call(*self.args, **self.kwargs)
             else:
                 obj = self.obj_call(*self.args)
         else:
-            if self.kwargs:
+            if self.kwargs and len(self.kwargs):
                 obj = self.obj_call(**self.kwargs)
             else:
                 obj = self.obj_call()
@@ -137,6 +140,12 @@ class Resources(object):
             q.close()
         del self.__unload_resources
 
+    def remove(self, name: str):
+        try:
+            self.remove(name)
+        except:
+            pass
+
 
 class Resource(object):
     load_func: LoadFunc
@@ -154,9 +163,9 @@ class Resource(object):
             return self
         except Exception:
             error = f"At Resource[{str(self)}]:\n" \
-                    f"\tObject:{self.load_func}\n" \
-                    f"\targs:{self.load_func}\n" \
-                    f"\tkwargs:{self.load_func}"
+                    f"\tObject:{str(self.load_func.obj_call)}\n" \
+                    f"\targs:{str(self.load_func.args)}\n" \
+                    f"\tkwargs:{str(self.load_func.kwargs)}"
             logging.error(f"{traceback.format_exc()}\n{error}")
 
     def set_load_func(self, obj_call, *args, **kwargs):
@@ -182,8 +191,17 @@ class LazyResource(Resource):
 
 
 class Properties:
-    def set_properties(self, name: str, target):
+    def set(self, name: str, target):
         setattr(self, name, target)
 
-    def get_properties(self, name: str):
-        return getattr(self, name)
+    def get(self, name: str):
+        try:
+            return getattr(self, name)
+        except:
+            return None
+
+    def remove(self, name: str):
+        try:
+            delattr(self, name)
+        except:
+            pass

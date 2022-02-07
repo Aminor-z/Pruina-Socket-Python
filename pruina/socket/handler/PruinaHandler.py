@@ -1,17 +1,17 @@
-import asyncio
 import logging
+from copy import copy
 from socketserver import BaseRequestHandler, BaseServer
 from typing import Any
 
-from pruina.socket.handler.util.General import CachedHooks, Resource, Properties, Resources
-from copy import copy
+from pruina.socket.handler.GeneralHandler import general_handle
+from pruina.socket.util.general import CachedHooks, Properties, Resources
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s %(levelname)s: %(message)s", datefmt="%Y-%m-%d %H:%M:%S"
 )
 
 
-class MessageHookRequestHandler(BaseRequestHandler):
+class PruinaHandler(BaseRequestHandler):
     def __init__(self, request: Any, client_address: Any, server: BaseServer):
         super().__init__(request, client_address, server)
         self.resources: Resources = None
@@ -21,6 +21,7 @@ class MessageHookRequestHandler(BaseRequestHandler):
         self.server_hooks: CachedHooks = None
         self.hooks: CachedHooks = None
         self.server_name: str = None
+        self.event_loop = None
 
     def setup(self):
         super().setup()
@@ -30,19 +31,40 @@ class MessageHookRequestHandler(BaseRequestHandler):
         self.properties: Properties = getattr(self.server, "properties")
         self.local_properties: Properties = copy(getattr(self.server, "local_properties"))
         self.server_hooks: CachedHooks = getattr(self.server, "hooks")
+        try:
+            self.before_handle = getattr(self.server, "before_handle")
+        except:
+            pass
+        try:
+            self.after_handle = getattr(self.server, "after_handle")
+        except:
+            pass
+        try:
+            self.except_handle = getattr(self.server, "except_handle")
+        except:
+            pass
         self.hooks: CachedHooks = CachedHooks(parent=self.server_hooks)
 
-    def handle(self):
-        logging.info(f'{self.client_address[0]}:{self.client_address[1]} connected.')
-        self._handle()
+    def before_handle(self, _type, _data, **kwargs):
+        pass
+
+    def after_handle(self, _type, _data, **kwargs):
+        pass
 
     def finish(self):
-        logging.info(f'{self.client_address[0]}:{self.client_address[1]} disconnected.')
+        pass
 
-    def _handle(self):
-        from pruina.socket.handler.GeneralHandler import general_handle
-        general_handle(self.request, self.hooks, self)
+    def close(self):
+        self.request.close()
+
+    def handle(self):
+        general_handle(self.request, self.hooks, self, before=self.before_handle, after=self.after_handle,
+                       except_handle=self.except_handle)
 
     def send(self, _type, data: bytes, _id=0):
-        from pruina.socket.handler.util.Util import send as __send
+        from pruina.socket.handler.util.util import send as __send
         __send(self.request, _type, data, _id=_id)
+
+    def except_handle(self, e: Exception, handler):
+        import traceback
+        logging.error(traceback.format_exc() + "\n" + str(e))

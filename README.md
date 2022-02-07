@@ -123,15 +123,15 @@ time.sleep(1)
 示例代码：
 
 ```python
-from pruina.socket.handler.MessageHookRequestHandler import MessageHookRequestHandler
+from pruina.socket.handler.PruinaHandler import PruinaHandler
 from pruina.socket.server import PruinaSocketServer
 
 
 # 服务端响应函数
-def server_response(word, handler: MessageHookRequestHandler = None, **kwargs):
-    decoded_word = word.decode()
-    print(f"{handler.server_name}: get '{decoded_word}'")
-    handler.send("server response", word)
+def server_response(word, handler: PruinaHandler = None, **kwargs):
+   decoded_word = word.decode()
+   print(f"{handler.server_name}: get '{decoded_word}'")
+   handler.send("server response", word)
 
 
 # 服务端
@@ -221,10 +221,10 @@ from pruina.socket.server import PruinaSocketServer
 
 server = PruinaSocketServer()
 
-server.properties.set_properties("var_int", 1)
-server.properties.set_properties("var_str", "Hello World!")
-server.local_properties.set_properties("var_list", list())
-server.local_properties.set_properties("var_dict", dict())
+server.properties.set("var_int", 1)
+server.properties.set("var_str", "Hello World!")
+server.local_properties.set("var_list", list())
+server.local_properties.set("var_dict", dict())
 
 server.init()
 server.serve_forever()
@@ -260,28 +260,28 @@ import torch
 import torch.nn as nn
 
 from pruina.socket.server import PruinaSocketServer
-from pruina.socket.handler.MessageHookRequestHandler import MessageHookRequestHandler
+from pruina.socket.handler.PruinaHandler import PruinaHandler
 
 
 class Model(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.linear = nn.Linear(1, 1)
+   def __init__(self):
+      super().__init__()
+      self.linear = nn.Linear(1, 1)
 
-    def forward(self, x):
-        return self.linear(x)
+   def forward(self, x):
+      return self.linear(x)
 
 
-def predict(d: bytes, handler: MessageHookRequestHandler = None, **kwargs):
-    model = handler.resources.get("torch_model_1")
-    x = torch.tensor([float(d.decode())], dtype=torch.float32)
-    y = model(x)
-    print(f'Torch model:\n\t{x.item():.4f}->{y.item():.4f}')
+def predict(d: bytes, handler: PruinaHandler = None, **kwargs):
+   model = handler.resources.get("torch_model_1")
+   x = torch.tensor([float(d.decode())], dtype=torch.float32)
+   y = model(x)
+   print(f'Torch model:\n\t{x.item():.4f}->{y.item():.4f}')
 
 
 model_path = 'resources/example.pt'
 if not os.path.exists('resources/example.pt'):
-    torch.save(Model(), model_path)
+   torch.save(Model(), model_path)
 server = PruinaSocketServer()
 
 server.resources.add_resource("torch_model_1", torch.load, model_path)
@@ -303,5 +303,5 @@ pip install cypackage
 ```
 * 使用`cypackage`生成cython版本的`Pruina-SocketServer`
 ```cmd
-cypackage Pruina-socket
+cypackage pruina-socket
 ```

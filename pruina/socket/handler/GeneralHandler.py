@@ -5,10 +5,11 @@ logging.basicConfig(
 )
 
 
-def general_handle(conn, hooks, handler):
+def general_handle(conn, hooks, handler, before=None, after=None, except_handle=None):
     import pruina.socket.handler.proto.PruinaSocketServer_pb2 as Pb
     data: bytes = bytes()
-    while True:
+    c: bool = True
+    while c:
         try:
             new_data: bytes = conn.recv(6)
             if new_data is None or new_data == b"":
@@ -29,13 +30,16 @@ def general_handle(conn, hooks, handler):
                 while size > len(data):
                     data += conn.recv(1024)
                 _data: bytes = data[:size]
-                wrapper = Pb.Wrapper()
+                wrapper: Pb.Wrapper = Pb.Wrapper()
                 wrapper.ParseFromString(_data)
                 data = data[size:]
-                hooks.call_hook(wrapper.type, wrapper.data, wrapper=wrapper, handler=handler)
-        except ConnectionResetError:
-            return False
-        except:
-            import traceback
-            logging.error(traceback.format_exc())
-            return False
+                if before is not None:
+                    before(wrapper.type, wrapper.data, wrapper=wrapper, handler=handler)
+                    hooks.call_hook(wrapper.type, wrapper.data, wrapper=wrapper, handler=handler)
+                if after is not None:
+                    after(wrapper.type, wrapper.data, wrapper=wrapper, handler=handler)
+        except Exception as e:
+            if except_handle is None:
+                raise e
+            else:
+                c = except_handle(e, handler)
